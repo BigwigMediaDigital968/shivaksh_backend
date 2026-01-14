@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { connect } = require("./config/db");
 // const subscriberRoutes = require("./routes/subscriber.route");
-// const leadRoutes = require("./routes/leads.route");
+const leadRoutes = require("./routes/leads.route");
 // const blogRoutes = require("./routes/blog.route");
 // const buyproperty = require("./routes/property.route");
 // const sellproperty = require("./routes/sell.route");
@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(cors());
 
 // app.use("/", subscriberRoutes);
-// app.use("/api/lead", leadRoutes);
+app.use("/api/lead", leadRoutes);
 // app.use("/blog", blogRoutes);
 // app.use("/property", buyproperty);
 // app.use("/sellproperty", sellproperty);

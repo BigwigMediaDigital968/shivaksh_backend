@@ -30,7 +30,7 @@ router.post("/send-otp", async (req, res) => {
     // 4️⃣ Send OTP email
     await sendEmail({
       to: email,
-      subject: "🔐 Your One-Time Password (OTP) – Khalsa Property Dealer",
+      subject: "🔐 Your One-Time Password (OTP) – Shivaksh ",
       html: `
     <div style="font-family: Arial, sans-serif; padding: 20px; background: #f7f7f7;">
       <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #e5e5e5;">
@@ -38,7 +38,7 @@ router.post("/send-otp", async (req, res) => {
         <h2 style="color: #14469d; margin-top: 0;">Hello ${name},</h2>
         
         <p style="font-size: 15px; color: #333;">
-          Thank you for choosing <strong>Khalsa Property Dealer</strong>.  
+          Thank you for choosing <strong>Shivaksh</strong>.  
           To verify your identity, please use the One-Time Password (OTP) given below:
         </p>
 
@@ -61,7 +61,7 @@ router.post("/send-otp", async (req, res) => {
 
         <p style="font-size: 14px; color: #333;">
           Warm regards,<br/>
-          <strong>Khalsa Property Dealer Team</strong>
+          <strong>Shivaksh</strong>
         </p>
 
       </div>
@@ -94,7 +94,7 @@ router.post("/verify-otp", async (req, res) => {
   // 1️⃣ Send confirmation email to the user
   await sendEmail({
     to: email,
-    subject: "We've received your query - KPD",
+    subject: "We've received your query - Shivaksh",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
         <div style="text-align: center; padding: 20px;">
@@ -103,7 +103,7 @@ router.post("/verify-otp", async (req, res) => {
         <div style="padding: 20px; background-color: #f9f9f9; border-radius: 10px;">
           <h2 style="color: #333;">Hello ${data.name},</h2>
           <p style="font-size: 16px; color: #555;">
-            Thank you for reaching out to <strong>KPD</strong>.
+            Thank you for reaching out to <strong>Shivaksh</strong>.
             We have received your message and our team will get in touch with you within the next 24-48 hours.
           </p>
           <p style="font-size: 16px; color: #555;">
@@ -111,7 +111,7 @@ router.post("/verify-otp", async (req, res) => {
           </p>
           <p style="margin-top: 30px; font-size: 15px; color: #777;">
             Regards,<br />
-            <strong>Team KPD</strong><br />
+            <strong>Team Shivaksh</strong><br />
             <a href="https://www.bigwigdigital.in/" style="color: #007BFF;">Bigwig Media Digital</a>
           </p>
         </div>
@@ -121,8 +121,8 @@ router.post("/verify-otp", async (req, res) => {
 
   // 2️⃣ Send internal notification to HR
   await sendEmail({
-    to: "hsinghkhalsa980@gmail.com", // 🔁 Replace with actual HR email
-    subject: "New Lead Captured - KPD",
+    to: "anuragkumarmait@gmail.com", // 🔁 Replace with actual HR email
+    subject: "New Lead Captured - Shivaksh",
     html: `
       <h3>New Lead Details</h3>
       <p><strong>Name:</strong> ${data.name}</p>

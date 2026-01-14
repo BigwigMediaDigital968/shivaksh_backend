@@ -16,7 +16,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev":"nodemon --ignore .git --ignore node_modules index.js"
+    "dev": "nodemon --ignore .git --ignore node_modules index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

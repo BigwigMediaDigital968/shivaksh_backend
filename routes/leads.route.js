@@ -98,7 +98,7 @@ router.post("/verify-otp", async (req, res) => {
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
         <div style="text-align: center; padding: 20px;">
-          <img src="https://res.cloudinary.com/dyum0r6gf/image/upload/v1768463111/shivaksh_yfwqkf.webp" alt="KPD Logo" width="120" />
+          <img src="https://res.cloudinary.com/dyum0r6gf/image/upload/v1768463111/shivaksh_yfwqkf.webp" alt="Shivakash Logo" width="120" />
         </div>
         <div style="padding: 20px; background-color: #f9f9f9; border-radius: 10px;">
           <h2 style="color: #333;">Hello ${data.name},</h2>

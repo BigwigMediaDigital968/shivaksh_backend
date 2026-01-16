@@ -1,36 +1,59 @@
 const mongoose = require("mongoose");
 
 const sellSchema = new mongoose.Schema({
-  name: { type: String, required: true }, // Seller name
-  email: { type: String, required: true }, // Seller email
-  phone: { type: String, required: true }, // Seller phone
-
-  title: { type: String, required: true },
-  slug: { type: String, unique: true }, // SEO-friendly URL
-  description: { type: String, default: "" },
-  purpose: {
+  name: {
     type: String,
-    required: true,},
-  location: { type: String, required: true },
+    required: true,
+    trim: true,
+  },
 
-  images: { type: [String], default: [] }, // URLs
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+  },
 
-  price: { type: Number, default: null },
-  bedrooms: { type: Number, default: null },
-  bathrooms: { type: Number, default: null },
-  areaSqft: { type: Number, default: null },
+  phone: {
+    type: String,
+    required: true,
+    trim: true,
+  },
 
-  highlights: { type: [String], default: [] },
-  featuresAmenities: { type: [String], default: [] },
-  nearby: { type: [String], default: [] },
+  // purpose: {
+  //   type: String,
+  //   required: true, // Sell / Rent / Lease etc.
+  // },
 
-  googleMapUrl: { type: String, default: "" },
-  videoLink: { type: String, default: "" },
-  extraHighlights: { type: [String], default: [] },
-  approved: { type: Boolean, default: false },
+  location: {
+    type: String,
+    required: true,
+  },
 
-  createdAt: { type: Date, default: Date.now },
-  lastUpdated: { type: Date, default: Date.now },
+  areaSqft: {
+    type: Number,
+    required: true,
+  },
+
+  image: {
+    type: String,
+    default: "", // default image path or URL
+  },
+
+  approved: {
+    type: Boolean,
+    default: false,
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+
+  lastUpdated: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model("Sell", sellSchema);

@@ -8,7 +8,7 @@ const upload = multer({ storage });
 
 // Create a new property with multiple images
 router.post(
-  "/",
+  "/add",
   upload.array("images", 50), // 'images' is the field name in form-data, max 10 files
   propertyController.createProperty
 );

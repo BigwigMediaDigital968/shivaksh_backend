@@ -2,18 +2,20 @@ const mongoose = require("mongoose");
 
 const propertySchema = new mongoose.Schema({
   title: { type: String, required: true },
-  slug: { type: String, unique: true }, // SEO-friendly URL
-  description: { type: String, default: "" }, // optional
+  slug: { type: String, unique: true },
+  description: { type: String, default: "" },
+
   purpose: {
     type: String,
     enum: ["Buy", "Sell", "Offplan"],
     required: true,
   },
+
   location: { type: String, required: true },
 
-  images: { type: [String], default: [] }, // URLs or Cloudinary links
+  images: { type: [String], default: [] },
 
-  price: { type: Number, default: null }, // optional
+  price: { type: Number, default: null },
   bedrooms: { type: Number, default: null },
   bathrooms: { type: Number, default: null },
   areaSqft: { type: Number, default: null },

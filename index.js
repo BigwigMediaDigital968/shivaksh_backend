@@ -5,8 +5,8 @@ const { connect } = require("./config/db");
 const leadRoutes = require("./routes/leads.route");
 const blogRoutes = require("./routes/blog.route");
 // const buyproperty = require("./routes/property.route");
-// const sellproperty = require("./routes/sell.route");
-// const sellApproval = require("./routes/adminApproval");
+const sellproperty = require("./routes/sell.route");
+const sellApproval = require("./routes/adminApproval.route");
 
 require("dotenv").config();
 
@@ -19,8 +19,8 @@ app.use(cors());
 app.use("/api/lead", leadRoutes);
 app.use("/blog", blogRoutes);
 // app.use("/property", buyproperty);
-// app.use("/sellproperty", sellproperty);
-// app.use("/sell", sellApproval);
+app.use("/sellproperty", sellproperty);
+app.use("/sellapproved", sellApproval);
 
 // Start server
 app.listen(process.env.PORT, async () => {

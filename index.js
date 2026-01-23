@@ -6,6 +6,7 @@ const leadRoutes = require("./routes/leads.route");
 const blogRoutes = require("./routes/blog.route");
 const buyproperty = require("./routes/property.route");
 const sellproperty = require("./routes/sell.route");
+const enquireForm = require("./routes/enquireform.route");
 // const sellApproval = require("./routes/adminApproval.route");
 
 require("dotenv").config();
@@ -20,6 +21,7 @@ app.use("/api/lead", leadRoutes);
 app.use("/blog", blogRoutes);
 app.use("/property", buyproperty);
 app.use("/sellproperty", sellproperty);
+app.use("/enquireForm", enquireForm);
 // app.use("/sellapproved", sellApproval);
 
 // Start server

@@ -14,6 +14,7 @@ router.post("/add", async (req, res) => {
         email,
         phone,
         message: message || "", 
+        createdAt: Date.now(),
     });
 
     await enquireForm.save();

@@ -1,15 +1,35 @@
 const Property = require("../models/property.model");
 
 /**
- * Utility: safely parse JSON arrays from form-data
+ * Utility: parse string arrays
+ * Supports:
+ * - JSON array: ["a","b"]
+ * - Comma-separated: "a, b, c"
+ * - Array input
  */
-const safeParseArray = (value) => {
+const parseStringArray = (value) => {
   if (!value) return [];
-  try {
-    return JSON.parse(value);
-  } catch (err) {
-    return [];
+
+  // Already an array
+  if (Array.isArray(value)) {
+    return value.map(v => String(v).trim()).filter(Boolean);
   }
+
+  // Try JSON
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed.map(v => String(v).trim()).filter(Boolean);
+    }
+  } catch (err) {
+    // ignore
+  }
+
+  // Fallback: comma-separated
+  return String(value)
+    .split(",")
+    .map(v => v.trim())
+    .filter(Boolean);
 };
 
 /**
@@ -22,9 +42,8 @@ const toNumberOrNull = (value) => {
 };
 
 /**
- * @desc    Create a new property with images
+ * @desc    Create property
  * @route   POST /api/properties
- * @access  Public or Admin
  */
 exports.createProperty = async (req, res) => {
   try {
@@ -45,17 +64,14 @@ exports.createProperty = async (req, res) => {
       extraHighlights,
     } = req.body;
 
-    // 🔒 Basic required validation
     if (!title || !purpose || !location) {
       return res.status(400).json({
         message: "title, purpose, and location are required",
       });
     }
 
-    // ✅ Images from multer
-    const images = req.files ? req.files.map((file) => file.path) : [];
+    const images = req.files ? req.files.map(file => file.path) : [];
 
-    // ✅ Generate slug
     const slug = title
       .toLowerCase()
       .replace(/[^\w\s-]/g, "")
@@ -66,7 +82,7 @@ exports.createProperty = async (req, res) => {
       title,
       slug,
       description: description || "",
-      purpose, // must be Buy | Sell | Offplan
+      purpose,
       location,
 
       price: toNumberOrNull(price),
@@ -74,14 +90,13 @@ exports.createProperty = async (req, res) => {
       bathrooms: toNumberOrNull(bathrooms),
       areaSqft: toNumberOrNull(areaSqft),
 
-      highlights: safeParseArray(highlights),
-      featuresAmenities: safeParseArray(featuresAmenities),
-      nearby: safeParseArray(nearby),
+      highlights: parseStringArray(highlights),
+      featuresAmenities: parseStringArray(featuresAmenities),
+      nearby: parseStringArray(nearby),
+      extraHighlights: parseStringArray(extraHighlights),
 
       googleMapUrl: googleMapUrl || "",
       videoLink: videoLink || "",
-      extraHighlights: safeParseArray(extraHighlights),
-
       images,
     });
 
@@ -102,7 +117,6 @@ exports.createProperty = async (req, res) => {
 /**
  * @desc    Get all properties
  * @route   GET /api/properties
- * @access  Public
  */
 exports.getProperties = async (req, res) => {
   try {
@@ -115,9 +129,8 @@ exports.getProperties = async (req, res) => {
 };
 
 /**
- * @desc    Get single property by slug
+ * @desc    Get property by slug
  * @route   GET /api/properties/:slug
- * @access  Public
  */
 exports.getPropertyBySlug = async (req, res) => {
   try {
@@ -133,9 +146,8 @@ exports.getPropertyBySlug = async (req, res) => {
 };
 
 /**
- * @desc    Delete property by slug
+ * @desc    Delete property
  * @route   DELETE /api/properties/:slug
- * @access  Admin
  */
 exports.deleteProperty = async (req, res) => {
   try {
@@ -155,9 +167,8 @@ exports.deleteProperty = async (req, res) => {
 };
 
 /**
- * @desc    Update a property by slug
+ * @desc    Update property
  * @route   PATCH /api/properties/:slug
- * @access  Admin
  */
 exports.updateProperty = async (req, res) => {
   try {
@@ -166,19 +177,17 @@ exports.updateProperty = async (req, res) => {
       return res.status(404).json({ message: "Property not found" });
     }
 
-    // ✅ Handle images
     let images = existing.images;
 
     if (req.body.existingImages) {
-      images = safeParseArray(req.body.existingImages);
+      images = parseStringArray(req.body.existingImages);
     }
 
     if (req.files && req.files.length > 0) {
-      const newImages = req.files.map((file) => file.path);
+      const newImages = req.files.map(file => file.path);
       images = [...images, ...newImages];
     }
 
-    // ✅ Slug regeneration if title changes
     let slug = existing.slug;
     if (req.body.title) {
       slug = req.body.title
@@ -216,30 +225,30 @@ exports.updateProperty = async (req, res) => {
           : existing.areaSqft,
 
       highlights: req.body.highlights
-        ? safeParseArray(req.body.highlights)
+        ? parseStringArray(req.body.highlights)
         : existing.highlights,
 
       featuresAmenities: req.body.featuresAmenities
-        ? safeParseArray(req.body.featuresAmenities)
+        ? parseStringArray(req.body.featuresAmenities)
         : existing.featuresAmenities,
 
       nearby: req.body.nearby
-        ? safeParseArray(req.body.nearby)
+        ? parseStringArray(req.body.nearby)
         : existing.nearby,
+
+      extraHighlights: req.body.extraHighlights
+        ? parseStringArray(req.body.extraHighlights)
+        : existing.extraHighlights,
 
       googleMapUrl: req.body.googleMapUrl ?? existing.googleMapUrl,
       videoLink: req.body.videoLink ?? existing.videoLink,
-
-      extraHighlights: req.body.extraHighlights
-        ? safeParseArray(req.body.extraHighlights)
-        : existing.extraHighlights,
 
       images,
       lastUpdated: Date.now(),
     };
 
-    const property = await Property.findOneAndUpdate(
-      { slug: req.params.slug },
+    const property = await Property.findByIdAndUpdate(
+      existing._id,
       { $set: updatedFields },
       { new: true }
     );

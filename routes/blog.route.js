@@ -10,20 +10,11 @@ router.post("/add", upload.single("coverImage"), async (req, res) => {
     const { title, slug, excerpt, content, author, tags, coverImageAlt } =
       req.body;
 
-    if (!req.file || (!req.file.path && !req.file.secure_url)) {
+    if (!req.file) {
       return res.status(400).json({ error: "Cover image is required." });
     }
 
-    if (!content || typeof content !== "string") {
-      return res.status(400).json({ error: "Blog content is required." });
-    }
-
     const coverImage = req.file.secure_url || req.file.path;
-
-    const imageAltText =
-      coverImageAlt && coverImageAlt.trim().length > 0
-        ? coverImageAlt.trim()
-        : title;
 
     const blogPost = new BlogPost({
       title,
@@ -33,7 +24,7 @@ router.post("/add", upload.single("coverImage"), async (req, res) => {
       author,
       tags: tags?.split(",").map((t) => t.trim()),
       coverImage,
-      coverImageAlt: imageAltText,
+      coverImageAlt: coverImageAlt || title,
     });
 
     await blogPost.save();
@@ -48,12 +39,41 @@ router.get("/viewblog", async (req, res) => {
   try {
     const blogs = await BlogPost.find().sort({ datePublished: -1 });
     res.status(200).json(blogs);
-  } catch (err) {
+  } catch {
     res.status(500).json({ msg: "Server Error" });
   }
 });
 
-/* ================= GET RELATED BLOGS (⚠️ MUST BE ABOVE :slug) ================= */
+/* ================= BLOG VIEW ANALYTICS ================= */
+router.get("/analytics/views", async (req, res) => {
+  try {
+    const blogs = await BlogPost.find({}, { viewStats: 1 });
+
+    const analytics = {};
+
+    blogs.forEach((blog) => {
+      blog.viewStats.forEach((stat) => {
+        if (!analytics[stat.date]) {
+          analytics[stat.date] = 0;
+        }
+        analytics[stat.date] += stat.count;
+      });
+    });
+
+    const result = Object.keys(analytics)
+      .sort()
+      .map((date) => ({
+        date,
+        views: analytics[date],
+      }));
+
+    res.status(200).json(result);
+  } catch {
+    res.status(500).json({ msg: "Server Error" });
+  }
+});
+
+/* ================= GET RELATED BLOGS ================= */
 router.get("/related/:slug", async (req, res) => {
   try {
     const currentBlog = await BlogPost.findOne({ slug: req.params.slug });
@@ -69,20 +89,35 @@ router.get("/related/:slug", async (req, res) => {
       .limit(4);
 
     res.status(200).json(related);
-  } catch (err) {
+  } catch {
     res.status(500).json({ msg: "Server Error" });
   }
 });
 
-/* ================= GET SINGLE BLOG BY SLUG ================= */
+/* ================= GET SINGLE BLOG (🔥 INCREMENT VIEW) ================= */
 router.get("/:slug", async (req, res) => {
   try {
+    const today = new Date().toISOString().slice(0, 10);
+
     const blog = await BlogPost.findOne({ slug: req.params.slug });
     if (!blog) {
       return res.status(404).json({ msg: "Blog not found" });
     }
+
+    // increment total views
+    blog.views += 1;
+
+    // increment daily views
+    const todayStat = blog.viewStats.find((v) => v.date === today);
+    if (todayStat) {
+      todayStat.count += 1;
+    } else {
+      blog.viewStats.push({ date: today, count: 1 });
+    }
+
+    await blog.save();
     res.status(200).json(blog);
-  } catch (err) {
+  } catch {
     res.status(500).json({ msg: "Server Error" });
   }
 });
@@ -101,7 +136,7 @@ router.put("/:slug", upload.single("coverImage"), async (req, res) => {
     }
 
     res.status(200).json(updated);
-  } catch (err) {
+  } catch {
     res.status(500).json({ msg: "Server Error" });
   }
 });
@@ -113,8 +148,9 @@ router.delete("/:slug", async (req, res) => {
     if (!deleted) {
       return res.status(404).json({ msg: "Blog not found" });
     }
+
     res.status(200).json({ msg: "Deleted" });
-  } catch (err) {
+  } catch {
     res.status(500).json({ msg: "Server Error" });
   }
 });

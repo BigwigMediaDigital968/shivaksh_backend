@@ -27,7 +27,7 @@ router.post("/add", async (req, res) => {
 /* ================= GET ALL ENQUIRE FORMS ================= */
 router.get("/view", async (req, res) => {
   try {
-    const enquireForms = await EnquireForm.find().sort({ dateSubmitted: -1 });
+    const enquireForms = await EnquireForm.find().sort({ createdAt: -1 });
     res.status(200).json(enquireForms);
   } catch (err) {
     res.status(500).json({ msg: "Server Error" });

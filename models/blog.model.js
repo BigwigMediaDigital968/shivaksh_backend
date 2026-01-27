@@ -40,6 +40,25 @@ const blogPostSchema = new mongoose.Schema({
     default: [],
   },
 
+  /* 🔥 NEW: TOTAL BLOG VIEWS */
+  views: {
+    type: Number,
+    default: 0,
+  },
+
+  /* 🔥 NEW: DATE-WISE VIEWS (FOR ANALYTICS CHART) */
+  viewStats: [
+    {
+      date: {
+        type: String, // YYYY-MM-DD
+      },
+      count: {
+        type: Number,
+        default: 0,
+      },
+    },
+  ],
+
   datePublished: {
     type: Date,
     default: Date.now,

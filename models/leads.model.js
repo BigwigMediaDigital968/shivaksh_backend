@@ -6,6 +6,7 @@ const leadSchema= new mongoose.Schema({
     phone: String,
     purpose:String,
     message:String,
+    propertyType:String,
     verified:{type: Boolean, default: false},
     createdAt:{type: Date,default:  Date.now()},
 })

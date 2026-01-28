@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const propertyController = require("../controllers/property.controller");
-const multer = require("multer");
-const storage = require("../config/storage"); // Cloudinary storage
+const upload = require("../middleware/upload"); // Multer storage configured for images + PDFs
 
-const upload = multer({ storage });
-
-// Create a new property with multiple images
+// Create a new property with multiple images + brochure PDFs
 router.post(
   "/add",
-  upload.array("images", 50), // 'images' is the field name in form-data, max 10 files
+  upload.fields([
+    { name: "images", maxCount: 50 },
+    { name: "broucher", maxCount: 10 },
+  ]),
   propertyController.createProperty
 );
 
@@ -19,11 +19,16 @@ router.get("/", propertyController.getProperties);
 // Get single property by slug
 router.get("/:slug", propertyController.getPropertyBySlug);
 
+// Delete property
 router.delete("/:slug", propertyController.deleteProperty);
 
+// Update property with images + brochure PDFs
 router.patch(
   "/:slug",
-  upload.array("images", 50),
+  upload.fields([
+    { name: "images", maxCount: 50 },
+    { name: "broucher", maxCount: 10 },
+  ]),
   propertyController.updateProperty
 );
 

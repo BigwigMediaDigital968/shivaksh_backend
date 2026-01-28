@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
 const { connect } = require("./config/db");
 // const subscriberRoutes = require("./routes/subscriber.route");
 const leadRoutes = require("./routes/leads.route");
@@ -16,7 +15,6 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // app.use("/", subscriberRoutes);
 app.use("/api/lead", leadRoutes);

@@ -131,6 +131,7 @@ router.post("/verify-otp", async (req, res) => {
       <p><strong>Phone:</strong> ${data.phone}</p>
       <p><strong>Purpose:</strong> ${data.purpose}</p>
       <p><strong>Message:</strong><br /> ${data.message}</p>
+      <p><strong>Property Type:</strong> ${data.propertyType}</p>
     `,
   });
 

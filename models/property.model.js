@@ -14,6 +14,8 @@ const propertySchema = new mongoose.Schema({
   location: { type: String, required: true },
 
   images: { type: [String], default: [] },
+  broucher:{type:[String],default:[]},
+
 
   price: { type: Number, default: null },
   bedrooms: { type: Number, default: null },
